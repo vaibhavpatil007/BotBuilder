@@ -51,3 +51,4 @@ class UserLoginView(APIView):
             {"message": "Login successful", "data": serializer.data},
             status=status.HTTP_200_OK
         )
+    # merge successfull
