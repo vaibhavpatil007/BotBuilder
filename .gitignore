@@ -1,2 +1,6 @@
-*env
-*env/
+FrontEnd/botbuilder/node_modules/
+FrontEnd/botbuilder/dist/
+__pycache__/
+*.pyc
+venv/
+env/
