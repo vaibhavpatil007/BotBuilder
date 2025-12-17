@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,22 +8,23 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { 
+import {
   Settings as SettingsIcon,
-  Building, 
-  Users, 
-  CreditCard, 
-  Key, 
+  Building,
+  Users,
+  CreditCard,
+  Key,
   Save,
   Upload,
   Trash2
 } from "lucide-react";
 
 const Settings = () => {
+  const [user, setUser] = useState<any>(null);
   const [companyProfile, setCompanyProfile] = useState({
-    name: "SANS Systems",
-    website: "https://sanssystems.com",
-    description: "Leading software development company",
+    name: "",
+    website: "",
+    description: "",
     logo: null as File | null
   });
 
@@ -36,6 +37,23 @@ const Settings = () => {
       limit: 5000
     }
   });
+
+  useEffect(() => {
+    const userData = localStorage.getItem("user");
+    if (userData) {
+      const parsedUser = JSON.parse(userData);
+      setUser(parsedUser);
+
+      // Fetch Company Profile
+      fetch(`http://127.0.0.1:8000/api/company/${parsedUser.id}/`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.name) {
+            setCompanyProfile(prev => ({ ...prev, ...data }));
+          }
+        });
+    }
+  }, []);
 
   const teamMembers = [
     { id: 1, name: "Vaibhav Singh", email: "vaibhav@sanssystems.com", role: "Owner", status: "Active" },
@@ -240,7 +258,7 @@ const Settings = () => {
                         <span>{billing.usage.requests.toLocaleString()} / {billing.usage.limit.toLocaleString()}</span>
                       </div>
                       <div className="w-full bg-muted rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
                           style={{ width: `${(billing.usage.requests / billing.usage.limit) * 100}%` }}
                         ></div>

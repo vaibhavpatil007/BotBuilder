@@ -45,7 +45,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
 
   const handleFileUpload = (files: FileList | null, type: 'documents' | 'logo' | 'avatar') => {
     if (!files) return;
-    
+
     if (type === 'documents') {
       setFormData(prev => ({
         ...prev,
@@ -75,10 +75,79 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
   const updateFAQ = (index: number, field: 'question' | 'answer', value: string) => {
     setFormData(prev => ({
       ...prev,
-      faqs: prev.faqs.map((faq, i) => 
+      faqs: prev.faqs.map((faq, i) =>
         i === index ? { ...faq, [field]: value } : faq
       )
     }));
+  };
+
+  const handleSubmit = async () => {
+    const userData = localStorage.getItem("user");
+    if (!userData) {
+      alert("Please login first");
+      return;
+    }
+    const user = JSON.parse(userData);
+
+    try {
+      // 1. Create Agent
+      const agentData = {
+        name: formData.name,
+        role_type: formData.roleType,
+        tone: formData.tone,
+        subdomain: formData.subdomain || `agent-${Date.now()}`,
+        status: 'Active',
+        user: user.id
+      };
+
+      const agentRes = await fetch("http://127.0.0.1:8000/api/agents/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(agentData)
+      });
+      const newAgent = await agentRes.json();
+
+      if (!agentRes.ok) throw new Error("Failed to create agent");
+
+      // 2. Upload Documents
+      for (const doc of formData.documents) {
+        const formData = new FormData();
+        formData.append("agent", newAgent.id);
+        formData.append("type", "document");
+        formData.append("file", doc);
+        formData.append("file_name", doc.name);
+        formData.append("file_size", (doc.size / 1024).toFixed(2) + " KB");
+
+        await fetch("http://127.0.0.1:8000/api/knowledge/", {
+          method: "POST",
+          body: formData
+        });
+      }
+
+      // 3. Upload FAQs
+      for (const faq of formData.faqs) {
+        if (!faq.question.trim()) continue;
+        const faqPayload = {
+          agent: newAgent.id,
+          type: "faq",
+          question: faq.question,
+          answer: faq.answer
+        };
+        await fetch("http://127.0.0.1:8000/api/knowledge/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(faqPayload)
+        });
+      }
+
+      onClose();
+      // Optionally trigger a refresh on dashboard (not implemented here)
+      window.location.reload();
+
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      alert("Error creating agent. Please try again.");
+    }
   };
 
   const renderStepContent = () => {
@@ -171,7 +240,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
                   </Button>
                 </Label>
               </div>
-              
+
               {formData.documents.length > 0 && (
                 <div className="mt-4 space-y-2">
                   {formData.documents.map((file, index) => (
@@ -300,7 +369,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
                     className="rounded-r-none"
                   />
                   <div className="px-3 py-2 bg-muted border border-l-0 rounded-r-md text-sm text-muted-foreground">
-                    .agentflow.com
+                    .botbuilder.io
                   </div>
                 </div>
               </div>
@@ -413,7 +482,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
             </span>
           </div>
           <div className="w-full bg-muted rounded-full h-2">
-            <div 
+            <div
               className="bg-gradient-primary h-2 rounded-full transition-all duration-300"
               style={{ width: `${(currentStep / totalSteps) * 100}%` }}
             ></div>
@@ -443,7 +512,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
             ) : (
               <div className="space-x-2">
                 <Button variant="outline">Test Agent</Button>
-                <Button variant="hero" onClick={onClose}>
+                <Button variant="hero" onClick={handleSubmit}>
                   <Sparkles className="mr-2 h-4 w-4" />
                   Save & Deploy
                 </Button>

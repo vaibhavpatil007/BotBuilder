@@ -1,75 +1,76 @@
-
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Bot, 
-  MessageSquare, 
-  BookOpen, 
-  Settings, 
-  BarChart3, 
-  Globe, 
+import {
+  Bot,
+  MessageSquare,
+  BookOpen,
+  Settings,
+  BarChart3,
+  Globe,
   Upload,
   Trash2,
   Edit,
   Copy,
-  ExternalLink
+  ExternalLink,
+  ArrowLeft
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 
 const AgentDashboard = () => {
   const { agentId } = useParams();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("conversations");
+  const [agent, setAgent] = useState<any>(null);
+  const [conversations, setConversations] = useState<any[]>([]);
+  const [knowledgeBase, setKnowledgeBase] = useState<any[]>([]);
+  const [analytics, setAnalytics] = useState({
+    conversations: 0,
+    avgRating: 0,
+    responseTime: "-",
+    topQuestions: [],
+    satisfactionRating: 0,
+    resolutionRate: 0
+  });
+  const [selectedConversation, setSelectedConversation] = useState<any>(null);
 
-  // Mock data
-  const agent = {
-    id: agentId,
-    name: "HR Buddy",
-    role: "HR",
-    status: "Active",
-    subdomain: "hrbuddy.agentflow.com",
-    conversations: 128,
-    totalQuestions: 450,
-    avgRating: 4.7
-  };
+  useEffect(() => {
+    if (!agentId) return;
 
-  const conversations = [
-    {
-      id: 1,
-      user: "john.doe@company.com",
-      lastMessage: "Thanks for helping with the leave policy!",
-      timestamp: "2 hours ago",
-      rating: 5,
-      status: "resolved"
-    },
-    {
-      id: 2,
-      user: "jane.smith@company.com", 
-      lastMessage: "Can you help me with benefits enrollment?",
-      timestamp: "4 hours ago",
-      rating: null,
-      status: "active"
-    }
-  ];
+    // Fetch Agent Details
+    fetch(`http://127.0.0.1:8000/api/agents/${agentId}/`)
+      .then(res => res.json())
+      .then(data => setAgent(data));
 
-  const knowledgeBase = [
-    { id: 1, name: "Employee Handbook.pdf", type: "document", size: "2.4 MB", uploaded: "2 days ago" },
-    { id: 2, name: "Leave Policy FAQ", type: "faq", questions: 12, uploaded: "1 week ago" },
-    { id: 3, name: "Benefits Overview.docx", type: "document", size: "1.8 MB", uploaded: "3 days ago" }
-  ];
+    // Fetch Analytics (Mock endpoint in backend for now)
+    // Fetch Analytics (Mock endpoint in backend for now)
+    fetch(`http://127.0.0.1:8000/api/agents/${agentId}/analytics/`)
+      .then(res => res.json())
+      .then(data => setAnalytics(prev => ({ ...prev, ...data })));
 
-  const analytics = {
-    topQuestions: [
-      { question: "What is the leave policy?", count: 45 },
-      { question: "How do I enroll in benefits?", count: 32 },
-      { question: "What are the working hours?", count: 28 }
-    ],
-    satisfactionRating: 4.7,
-    responseTime: "2.3s",
-    resolutionRate: 89
-  };
+    // Fetch Conversations
+    fetch(`http://127.0.0.1:8000/api/conversations/?agent_id=${agentId}`)
+      .then(res => res.json())
+      .then(data => setConversations(data));
+
+    // Fetch Knowledge Base
+    fetch(`http://127.0.0.1:8000/api/knowledge/?agent_id=${agentId}`)
+      .then(res => res.json())
+      .then(data => setKnowledgeBase(data));
+
+  }, [agentId]);
+
+  if (!agent) return <div className="p-8 text-center">Loading agent...</div>;
+
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -78,29 +79,47 @@ const AgentDashboard = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/dashboard')}>
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
               <div className="w-10 h-10 bg-gradient-accent rounded-lg flex items-center justify-center">
                 <Bot className="h-5 w-5 text-accent-foreground" />
               </div>
               <div>
                 <h1 className="text-xl font-bold">{agent.name}</h1>
-                <p className="text-sm text-muted-foreground">{agent.role} Assistant</p>
+                <p className="text-sm text-muted-foreground">{agent.role_type} Assistant</p>
               </div>
-              <Badge variant="secondary">{agent.status}</Badge>
             </div>
+            <Button
+              variant={agent.status === 'Active' ? 'default' : 'secondary'}
+              size="sm"
+              onClick={() => {
+                const newStatus = agent.status === 'Active' ? 'Inactive' : 'Active';
+                fetch(`http://127.0.0.1:8000/api/agents/${agentId}/`, {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ status: newStatus })
+                })
+                  .then(res => res.json())
+                  .then(updated => setAgent(updated));
+              }}
+            >
+              {agent.status}
+            </Button>
+          </div>
 
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                View Live
-              </Button>
-              <Button variant="outline" size="sm">
-                <Settings className="mr-2 h-4 w-4" />
-                Settings
-              </Button>
-            </div>
+          <div className="flex items-center space-x-2">
+            <Button variant="outline" size="sm" onClick={() => navigate(`/chat/${agent.id}`)}>
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Preview Chat
+            </Button>
+            <Button variant="outline" size="sm" onClick={() => setActiveTab("settings")}>
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Button>
           </div>
         </div>
-      </header>
+      </header >
 
       <div className="container mx-auto px-6 py-8">
         {/* Quick Stats */}
@@ -112,18 +131,7 @@ const AgentDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{agent.conversations}</div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Questions Answered
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{agent.totalQuestions}</div>
+              <div className="text-2xl font-bold">{analytics.conversations}</div>
             </CardContent>
           </Card>
 
@@ -134,7 +142,7 @@ const AgentDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{agent.avgRating}/5</div>
+              <div className="text-2xl font-bold">{analytics.avgRating}/5</div>
             </CardContent>
           </Card>
 
@@ -187,12 +195,12 @@ const AgentDashboard = () => {
                       className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
                     >
                       <div className="space-y-1">
-                        <p className="font-medium">{conversation.user}</p>
+                        <p className="font-medium">{conversation.user_identifier}</p>
                         <p className="text-sm text-muted-foreground">
-                          {conversation.lastMessage}
+                          {conversation.status}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {conversation.timestamp}
+                          {new Date(conversation.created_at).toLocaleString()}
                         </p>
                       </div>
                       <div className="flex items-center space-x-2">
@@ -204,7 +212,12 @@ const AgentDashboard = () => {
                             ⭐ {conversation.rating}
                           </Badge>
                         )}
-                        <Button variant="ghost" size="sm">
+
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setSelectedConversation(conversation)}
+                        >
                           <MessageSquare className="h-4 w-4" />
                         </Button>
                       </div>
@@ -215,17 +228,76 @@ const AgentDashboard = () => {
             </Card>
           </TabsContent>
 
+          <Dialog open={!!selectedConversation} onOpenChange={() => setSelectedConversation(null)}>
+            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Conversation with {selectedConversation?.user_identifier}</DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                {selectedConversation?.messages && selectedConversation.messages.map((msg: any) => (
+                  <div
+                    key={msg.id}
+                    className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[80%] p-3 rounded-lg ${msg.sender === 'user'
+                        ? 'bg-primary text-primary-foreground'
+                        : 'bg-muted'
+                        }`}
+                    >
+                      <p className="text-sm">{msg.content}</p>
+                      <p className="text-xs opacity-70 mt-1">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {(!selectedConversation?.messages || selectedConversation.messages.length === 0) && (
+                  <p className="text-center text-muted-foreground py-8">No messages in this conversation.</p>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+
           <TabsContent value="knowledge">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Knowledge Base</CardTitle>
-                    <CardDescription>
-                      Manage documents and FAQs that power your AI agent
-                    </CardDescription>
-                  </div>
-                  <Button>
+                <div>
+                  <CardTitle>Knowledge Base</CardTitle>
+                  <CardDescription>
+                    Manage documents and FAQs that power your AI agent
+                  </CardDescription>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="file"
+                    id="kb-upload"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+
+                      const formData = new FormData();
+                      formData.append('agent', agentId || '');
+                      formData.append('type', 'document');
+                      formData.append('file', file);
+
+                      fetch('http://127.0.0.1:8000/api/knowledge/', {
+                        method: 'POST',
+                        body: formData,
+                      })
+                        .then(res => {
+                          if (res.ok) return res.json();
+                          throw new Error('Upload failed');
+                        })
+                        .then(newDoc => {
+                          setKnowledgeBase(prev => [newDoc, ...prev]);
+                          alert("Document uploaded successfully!");
+                        })
+                        .catch(err => alert("Error uploading document"));
+                    }}
+                  />
+                  <Button onClick={() => document.getElementById('kb-upload')?.click()}>
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Content
                   </Button>
@@ -247,11 +319,11 @@ const AgentDashboard = () => {
                           )}
                         </div>
                         <div>
-                          <p className="font-medium">{item.name}</p>
+                          <p className="font-medium">{item.type === 'document' ? item.file_name : item.question}</p>
                           <p className="text-sm text-muted-foreground">
-                            {item.type === 'document' ? 
-                              `${item.size} • Uploaded ${item.uploaded}` :
-                              `${item.questions} questions • Added ${item.uploaded}`
+                            {item.type === 'document' ?
+                              `Document • Added ${new Date(item.uploaded_at).toLocaleDateString()}` :
+                              `FAQ • Added ${new Date(item.uploaded_at).toLocaleDateString()}`
                             }
                           </p>
                         </div>
@@ -282,7 +354,7 @@ const AgentDashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {analytics.topQuestions.map((item, index) => (
+                    {(analytics.topQuestions || []).map((item: any, index: number) => (
                       <div key={index} className="flex items-center justify-between">
                         <p className="text-sm">{item.question}</p>
                         <Badge variant="outline">{item.count}</Badge>
@@ -347,24 +419,50 @@ const AgentDashboard = () => {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Subdomain Settings</CardTitle>
+                  <CardTitle>Embed Widget</CardTitle>
                   <CardDescription>
-                    Manage your hosted agent page
+                    Use this code to add the chat widget to your website
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    <div className="p-4 bg-muted rounded-lg relative group">
+                      <pre className="text-xs overflow-x-auto whitespace-pre-wrap font-mono text-muted-foreground p-2">
+                        {`<script 
+  src="${window.location.origin}/widget.js" 
+  data-agent-id="${agent?.id}"
+></script>`}
+                      </pre>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => {
+                          const code = `<script src="${window.location.origin}/widget.js" data-agent-id="${agent?.id}"></script>`;
+                          navigator.clipboard.writeText(code);
+                          alert("Copied to clipboard!");
+                        }}
+                      >
+                        <Copy className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <div>
-                      <label className="text-sm font-medium">Subdomain URL</label>
-                      <div className="flex items-center space-x-2 mt-1">
-                        <p className="text-sm font-mono bg-muted px-2 py-1 rounded">
-                          {agent.subdomain}
-                        </p>
-                        <Button variant="ghost" size="sm">
+                      <h4 className="text-sm font-medium mb-2">Subdomain URL</h4>
+                      <div className="flex items-center space-x-2">
+                        <Input
+                          value={`${window.location.origin}/BotBuilder/chat/${agent?.id}`}
+                          readOnly
+                          className="bg-muted"
+                        />
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}/BotBuilder/chat/${agent?.id}`);
+                            alert("Copied!");
+                          }}
+                        >
                           <Copy className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <ExternalLink className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
@@ -375,7 +473,7 @@ const AgentDashboard = () => {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </div >
   );
 };
 

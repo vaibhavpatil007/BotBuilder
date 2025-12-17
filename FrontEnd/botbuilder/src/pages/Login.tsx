@@ -34,6 +34,8 @@ const Login = () => {
       const data = await response.json();
 
       if (response.ok) {
+        localStorage.setItem("user", JSON.stringify(data.data));
+        localStorage.setItem("token", JSON.stringify(data.token));
         // Wait 1 second for smooth transition
         setTimeout(() => {
           navigate("/dashboard");
@@ -66,7 +68,7 @@ const Login = () => {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
-          <CardDescription>Sign in to your AgentFlow account</CardDescription>
+          <CardDescription>Sign in to your BotBuilder account</CardDescription>
         </CardHeader>
 
         <form onSubmit={handleSubmit}>
@@ -99,9 +101,9 @@ const Login = () => {
           </CardContent>
 
           <CardFooter className="flex flex-col space-y-4">
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               variant="hero"
               disabled={loading}
             >
