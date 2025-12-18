@@ -10,7 +10,7 @@ const Footer = () => {
               <span className="text-xl font-bold text-foreground">AgentFlow</span>
             </div>
             <p className="text-muted-foreground mb-6 max-w-md">
-              The leading multi-tenant AI agent platform for building custom AI assistants 
+              The leading multi-tenant AI agent platform for building custom AI assistants
               that transform how businesses operate.
             </p>
             <div className="flex space-x-4">
@@ -25,7 +25,7 @@ const Footer = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Product */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Product</h3>
@@ -36,7 +36,7 @@ const Footer = () => {
               <li><a href="#" className="text-muted-foreground hover:text-accent transition-colors">API Docs</a></li>
             </ul>
           </div>
-          
+
           {/* Company */}
           <div>
             <h3 className="font-semibold text-foreground mb-4">Company</h3>
@@ -48,7 +48,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        
+
         <div className="border-t border-border mt-12 pt-8 flex flex-col md:flex-row items-center justify-between">
           <p className="text-muted-foreground text-sm">
             © 2024 AgentFlow. All rights reserved.

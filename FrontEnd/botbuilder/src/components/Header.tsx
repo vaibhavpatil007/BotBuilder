@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import botLogo from "../assets/BOT_logo_removebg.png";
 
 const Header = () => {
   return (
@@ -7,17 +8,17 @@ const Header = () => {
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg"></div>
-            <span className="text-xl font-bold text-foreground">AgentFlow</span>
+            <img src={botLogo} alt="BotBuilder Logo" className="w-12 h-12 rounded-lg object-contain" />
+            <span className="text-xl font-bold text-foreground">BotBuilder</span>
           </div>
-          
+
           <nav className="hidden md:flex items-center space-x-8">
             <a href="#features" className="text-foreground hover:text-accent transition-colors">Features</a>
             <a href="#use-cases" className="text-foreground hover:text-accent transition-colors">Use Cases</a>
             <a href="#pricing" className="text-foreground hover:text-accent transition-colors">Pricing</a>
             <a href="#contact" className="text-foreground hover:text-accent transition-colors">Contact</a>
           </nav>
-          
+
           <div className="flex items-center space-x-4">
             <Button variant="ghost" asChild>
               <Link to="/login">Sign In</Link>

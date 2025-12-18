@@ -10,7 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import botLogo from "../assets/BOT_logo.png";
+import botLogo from "../assets/BOT_logo_removebg.png";
 
 const Dashboard = () => {
   const [showCreateWizard, setShowCreateWizard] = useState(false);
