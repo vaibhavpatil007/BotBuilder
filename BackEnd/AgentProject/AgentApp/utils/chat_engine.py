@@ -36,8 +36,7 @@ def get_bot_response(agent_id, user_message):
         # Use OpenRouter via ChatOpenAI
         llm = ChatOpenAI(
             model="nex-agi/deepseek-v3.1-nex-n1:free",
-            openai_api_key="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",
-            # openai_api_key=os.getenv("OPENROUTER_API_KEY"),
+            openai_api_key="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",
             openai_api_base="https://openrouter.ai/api/v1",
             temperature=0
         )
