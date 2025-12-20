@@ -1,8 +1,11 @@
-from langchain_huggingface import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
+from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_community.vectorstores import FAISS
 from django.conf import settings
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 SYSTEM_PROMPT = """
 You are a company policy assistant.
@@ -13,7 +16,7 @@ If the answer is not present, say:
 
 def get_bot_response(agent_id, user_message):
     # Use same embedding model as vector_store.py
-    embeddings = HuggingFaceEmbeddings(
+    embeddings = SentenceTransformerEmbeddings(
         model_name="all-MiniLM-L6-v2",
         model_kwargs={'device': 'cpu'}
     )
@@ -36,7 +39,7 @@ def get_bot_response(agent_id, user_message):
         # Use OpenRouter via ChatOpenAI
         llm = ChatOpenAI(
             model="nex-agi/deepseek-v3.1-nex-n1:free",
-            openai_api_key="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",
+            openai_api_key=os.getenv("OPENROUTER_API_KEY"),
             openai_api_base="https://openrouter.ai/api/v1",
             temperature=0
         )

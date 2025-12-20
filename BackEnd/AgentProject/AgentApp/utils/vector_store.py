@@ -1,5 +1,6 @@
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
+from sentence_transformers import SentenceTransformer
+from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
 from langchain_community.vectorstores import FAISS
 from django.conf import settings
 import os
@@ -16,7 +17,8 @@ def build_agent_vector_store(agent, documents):
     chunks = splitter.split_documents(documents)
     
     # Use standard free HuggingFace model (runs locally)
-    embeddings = HuggingFaceEmbeddings(
+    # Using SentenceTransformerEmbeddings directly to avoid meta tensor issues in langchain-huggingface
+    embeddings = SentenceTransformerEmbeddings(
         model_name="all-MiniLM-L6-v2",
         model_kwargs={'device': 'cpu'}
     )

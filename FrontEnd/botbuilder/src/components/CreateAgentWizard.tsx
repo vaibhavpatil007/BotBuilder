@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Upload, X, ArrowLeft, ArrowRight, Sparkles, Bot } from "lucide-react";
+import { Upload, X, ArrowLeft, ArrowRight, Sparkles, Bot, Loader2 } from "lucide-react";
 
 interface CreateAgentWizardProps {
   onClose: () => void;
@@ -16,6 +16,7 @@ interface CreateAgentWizardProps {
 
 const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [isDeploying, setIsDeploying] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     roleType: "general",
@@ -82,6 +83,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
   };
 
   const handleSubmit = async () => {
+    setIsDeploying(true);
     const userData = localStorage.getItem("user");
     if (!userData) {
       alert("Please login first");
@@ -147,6 +149,7 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
     } catch (error) {
       console.error("Error creating agent:", error);
       alert("Error creating agent. Please try again.");
+      setIsDeploying(false);
     }
   };
 
@@ -512,9 +515,18 @@ const CreateAgentWizard = ({ onClose }: CreateAgentWizardProps) => {
             ) : (
               <div className="space-x-2">
                 <Button variant="outline">Test Agent</Button>
-                <Button variant="hero" onClick={handleSubmit}>
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  Save & Deploy
+                <Button variant="hero" onClick={handleSubmit} disabled={isDeploying}>
+                  {isDeploying ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Preparing...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2 h-4 w-4" />
+                      Save & Deploy
+                    </>
+                  )}
                 </Button>
               </div>
             )}
