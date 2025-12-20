@@ -25,20 +25,20 @@
 ---
 
 ## 🌐 BotBuilder
-
+> landing page.*
 <p align="center">
   <img src="FrontEnd/botbuilder/src/assets/Landing_Page.png" alt="BotBuilder Landing Page" width="90%" />
 </p>
 
-> landing page.*
+> Dash Board.*
 <p align="center">
   <img src="FrontEnd/botbuilder/src/assets/DashBoard.png" alt="BotBuilder Landing Page" width="90%" />
 </p>
-> Dash Board.*'
+> Agent DashBoard.*
 <p align="center">
   <img src="FrontEnd/botbuilder/src/assets/AgentDashboard.png" alt="BotBuilder Landing Page" width="90%" />
 </p>
-> Agent DashBoard.*
+
 
 
 ---
