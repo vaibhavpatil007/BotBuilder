@@ -9,14 +9,8 @@
 </p>
 
 <p align="center">
-  <a href="https://your-live-demo-link.com">
-    <img src="https://img.shields.io/badge/Live-Demo-green?style=for-the-badge" />
-  </a>
-  <a href="https://github.com/your-username/BotBuilder">
+  <a href="https://github.com/vaibhavpatil007/BotBuilder">
     <img src="https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge" />
-  </a>
-  <a href="https://your-docs-link.com">
-    <img src="https://img.shields.io/badge/Documentation-Read-blue?style=for-the-badge" />
   </a>
 </p>
 
@@ -30,10 +24,10 @@
 
 ---
 
-## 🌐 Landing Page Preview
+## 🌐 BotBuilder
 
 <p align="center">
-  <img src="assets/landing-page.png" alt="BotBuilder Landing Page" width="90%" />
+  <img src="FrontEnd/botbuilder/src/assets/Landing_Page.png" alt="BotBuilder Landing Page" width="90%" />
 </p>
 
 > 📌 *Replace `assets/landing-page.png` with your actual landing page image path.*
