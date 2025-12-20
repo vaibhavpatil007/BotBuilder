@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/logo.png" alt="BotBuilder Logo" width="120"/>
+  <img src="assets/BOT_logo_removebg.png" alt="BotBuilder Logo" width="120"/>
 </p>
 
 <h1 align="center">BotBuilder</h1>
