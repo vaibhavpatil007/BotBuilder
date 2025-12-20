@@ -105,18 +105,10 @@ cd BotBuilder
 
 ## Backend
 Backend:
-Create Venv in path of \BotBuilder\BackEnd\  :
-```bash
-python -m venv venv
-Install requirements.txt:
-```bash
-pip install -r requirements.txt
-Run project with Django Runserver:
-```bash
-python manage.py runserver
-Create makemigrations for DB:
-```bash
-python manage.py makemigrations > python manage.py migrate
+Create Venv in path of \BotBuilder\BackEnd\  :python -m venv venv
+Install requirements.txt:pip install -r requirements.txt
+Run project with Django Runserver: python manage.py runserver
+Create makemigrations for DB: python manage.py makemigrations > python manage.py migrate
 
 FrontEnd:
 Locate this path: FrontEnd\botbuilder
