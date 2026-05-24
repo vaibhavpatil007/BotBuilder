@@ -6,6 +6,12 @@ pipeline {
     }
 
     stages {
+        
+        stage('Check Python') {
+            steps {
+                bat 'python --version'
+            }
+        }
 
         stage('Clone Code') {
             steps {
