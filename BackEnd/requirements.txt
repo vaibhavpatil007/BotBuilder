@@ -1,4 +1,4 @@
-aiohappyeyeballs==2.6.1
+﻿aiohappyeyeballs==2.6.1
 aiohttp==3.13.2
 aiosignal==1.4.0
 annotated-types==0.7.0
@@ -75,7 +75,7 @@ pillow==12.0.0
 propcache==0.4.1
 proto-plus==1.26.1
 protobuf==5.29.5
-psycopg2==2.9.10
+# psycopg2 removal
 psycopg2-binary==2.9.10
 pyasn1==0.6.1
 pyasn1_modules==0.4.2
