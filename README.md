@@ -25,12 +25,21 @@
 ---
 
 ## 🌐 BotBuilder
-
+> landing page.*
 <p align="center">
   <img src="FrontEnd/botbuilder/src/assets/Landing_Page.png" alt="BotBuilder Landing Page" width="90%" />
 </p>
 
-> 📌 *Replace `assets/landing-page.png` with your actual landing page image path.*
+> Dash Board.*
+<p align="center">
+  <img src="FrontEnd/botbuilder/src/assets/DashBoard.png" alt="BotBuilder Landing Page" width="90%" />
+</p>
+> Agent DashBoard.*
+<p align="center">
+  <img src="FrontEnd/botbuilder/src/assets/AgentDashboard.png" alt="BotBuilder Landing Page" width="90%" />
+</p>
+
+
 
 ---
 
@@ -65,6 +74,7 @@ This architecture eliminates hallucinations and ensures data accuracy.
 - Django
 - Django REST Framework
 - JWT Authentication
+- PL/SQL
 
 ### AI & Data
 - LangChain (RAG orchestration)
@@ -76,7 +86,6 @@ This architecture eliminates hallucinations and ensures data accuracy.
 
 ## ✨ Features
 
-- 🔐 Secure authentication with JWT
 - 📊 Centralized dashboard for agents & usage
 - 🤖 Multi-step AI agent creation wizard
 - 📚 Knowledge base with document uploads & FAQs
@@ -93,3 +102,16 @@ This architecture eliminates hallucinations and ensures data accuracy.
 ```bash
 git clone https://github.com/your-username/BotBuilder.git
 cd BotBuilder
+
+## Backend
+Backend:
+Create Venv in path of \BotBuilder\BackEnd\  :python -m venv venv
+Install requirements.txt:pip install -r requirements.txt
+Run project with Django Runserver: python manage.py runserver
+Create makemigrations for DB: python manage.py makemigrations > python manage.py migrate
+
+FrontEnd:
+Locate this path: FrontEnd\botbuilder
+Install node modules: npm install / npm i
+Run with dev: npm run dev
+
